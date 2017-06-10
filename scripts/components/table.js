@@ -1,4 +1,4 @@
-function table(month, categories, items) {
+function table(props) {
   return {
     tag: "table",
     styles: {
@@ -10,9 +10,9 @@ function table(month, categories, items) {
         tag: "tr",
         children: [{
           tag: "th",
-          value: MONTH_NAMES[month.getMonth()]
+          value: MONTH_NAMES[props.month.getMonth()]
         }].concat(
-          categories.map(function(category) {
+          props.categories.map(function(category) {
             return {
               tag: "th",
               value: category.name,
@@ -25,20 +25,28 @@ function table(month, categories, items) {
       }]
     }, {
       tag: "tbody",
-      children: listDaysForMonth(month).map(function (day) {
+      children: listDaysForMonth(props.month).map(function (day) {
         return {
           tag: "tr",
           children: [{
             tag: "td",
             value: day.getDate(),
           }].concat(
-            group(categories, items, sortByDay).map(function (item) {
+            group(props.categories, props.items, sortByDay).map(function (item) {
               var items = item.find(function (items) {
                 return items.date.getTime() == day.getTime()
               })
               return {
                 tag: "td",
-                children: items && items.items.map(debit)
+                children: items && items.items.map(function (item) {
+                  return {
+                    component: Debit,
+                    item: item,
+                    handleClick: function (e) {
+                      console.log("CLICKED!!", e)
+                    }
+                  }
+                })
               }
             })
           )

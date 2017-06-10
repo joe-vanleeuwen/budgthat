@@ -17,7 +17,7 @@ function stubDataGenerator() {
       name: "Coming soon",
       amount: getRandom(1, 300),
       category: getRandom(0, file.data.categories.items.length + 1),
-      date: (new Date(2017, 4, getRandom(1, 32))).toISOString(),
+      date: (new Date((new Date()).getFullYear(), (new Date()).getMonth(), getRandom(1, 32))).toISOString(),
       recurring: null
     })
   })

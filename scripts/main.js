@@ -32,7 +32,12 @@ function init(forceReload) {
 
 var generatedData = stubDataGenerator().data
 var container = document.getElementById("app")
-container.appendChild(createHTML(table(new Date(), generatedData.categories.items, generatedData.debits.items)).el)
+// container.appendChild(createHTML(table(new Date(), generatedData.categories.items, generatedData.debits.items)).el)
+container.appendChild(DOM.create(table({
+  month: new Date(),
+  categories: generatedData.categories.items,
+  items: generatedData.debits.items
+})).el)
 
 /*
  * Thoughts: 

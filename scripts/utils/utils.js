@@ -29,3 +29,12 @@ _.defaults = function(obj, defaultValues) {
   }
   return Object.assign({}, obj, _values)
 }
+
+_.extend = function(obj, extendValues) {
+  for (k in extendValues) {
+    if (typeof obj[k] == 'undefined') {
+      obj[k] = extendValues[k]
+    }
+  }
+  return obj
+}
