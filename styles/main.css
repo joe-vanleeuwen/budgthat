@@ -8,3 +8,38 @@ th, td {
   padding: 10px;
   text-align: right;
 }
+
+tbody td:hover > span {
+  display: inline-block !important;
+}
+
+/*tbody td > span {
+  margin: 0 auto;
+  padding: 5px;
+  border: 1px solid black;
+  color: black;
+  font-size: 14px;
+  border-radius: 50%;
+}
+
+tbody td > span:hover {
+  background: rgba(51, 57, 165, 0.48);
+}*/
+
+/*tbody td:hover > button {
+  display: block !important;
+}
+
+tbody td > button {
+  margin: 0 auto;
+  padding: 5px 10px;
+  border: 0;
+  background: rgba(72, 80, 220, 0.48);
+  color: #fff;
+  font-size: 14px;
+  border-radius: 15px;
+}
+
+tbody td > button:hover {
+  background: rgba(51, 57, 165, 0.48);
+}*/

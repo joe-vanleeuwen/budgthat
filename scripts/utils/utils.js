@@ -31,6 +31,9 @@ _.defaults = function(obj, defaultValues) {
 }
 
 _.extend = function(obj, extendValues) {
+  if (!obj) {
+    return extendValues
+  }
   for (k in extendValues) {
     if (typeof obj[k] == 'undefined') {
       obj[k] = extendValues[k]

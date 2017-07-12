@@ -1,4 +1,4 @@
-class Debit extends DOM.Component {
+class DebitForm extends DOM.Component {
 
   constructor(props) {
     super(props)
@@ -9,12 +9,12 @@ class Debit extends DOM.Component {
 
   render() {
     return {
-      tag: "div",
+      tag: "span",
+      value: "+",
       styles: {
-        fontSize: "18px",
-        // backgroundColor: "green",
-        color: this.state.color,
+        display: "none", // try onMouseEnter
         cursor: "pointer",
+        padding: "0 5px"
       },
       onClick: this.state.showForm ? null : function (e) {
         console.log("debit onClick")
@@ -23,16 +23,7 @@ class Debit extends DOM.Component {
           showForm: true
         })
       },
-      children: [{
-        tag: "span",
-        value: this.props.item.name
-      }, {
-        tag: "strong",
-        children: [{
-          tag: "span",
-          value: this.props.item.amount
-        }]
-      }].concat(this.state.showForm ? [{
+      children: this.state.showForm ? [{
         component: Form,
         fields: [{
           name: "name",
@@ -61,7 +52,7 @@ class Debit extends DOM.Component {
               showForm: false
             })
           }
-      }] : null)
+      }] : null
     }
   }
 }

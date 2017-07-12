@@ -24,6 +24,18 @@ function init(forceReload) {
   })
 }
 
+// target = document.getElementById("app")
+// var observer = new MutationObserver(function(mutations) {
+//   mutations.forEach(function(mutation) {
+//     console.log(mutation.type, mutation);
+//   });    
+// });
+
+// var config = { attributes: true, childList: true, characterData: true, subtree: true };
+ 
+// // pass in the target node, as well as the observer options
+// observer.observe(target, config);
+
 // init().then(function (file) {
 //   console.log("file", file)
 //   var container = document.getElementById("app")
@@ -31,18 +43,22 @@ function init(forceReload) {
 // })
 
 var generatedData = stubDataGenerator().data
-var container = document.getElementById("app")
-// container.appendChild(createHTML(table(new Date(), generatedData.categories.items, generatedData.debits.items)).el)
-container.appendChild(DOM.create(table({
-  month: new Date(),
-  categories: generatedData.categories.items,
-  items: generatedData.debits.items
-})).el)
+
+DOM.create({
+  el: document.getElementById("app"),
+  children: [
+    table({
+      month: new Date(),
+      categories: generatedData.categories.items,
+      items: generatedData.debits.items
+    })
+  ]
+})._render()
+
+
 
 /*
  * Thoughts: 
  * - Link a source to debits. Only certian sources can be used for cetain expenses...
- *
- *
  */
 

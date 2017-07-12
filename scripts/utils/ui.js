@@ -1,98 +1,124 @@
-function createComponent(tag, value, children /*options*/) {
-  return {
-    tag: tag,
-    value: value,
-    children: children
-  }
-}
-
-var createHTML = function (node) {
-  node.el = document.createElement(node.tag)
-  node.el.innerHTML = node.value || ""
-
-  if (node.styles) {
-    for (var k in node.styles) {
-      node.el.style[k] = node.styles[k]
-    }
-  }
-
-  if (node.onClick) {
-    node.el.addEventListener("click", node.onClick)
-  }
-
-  if (node.children) {
-    node.children.forEach(function (child) {
-      node.el.appendChild(createHTML(child).el)
-    })
-  }
-  return node
-}
-
 var DOM = (function() {
-  function Component(props) {
-    this.props = props
-    // _.extend(this, props)
-    this.init()
-    this._render(this.render())
-    return this
+  class Component {
+    constructor(props) {
+      this.props = props
+      this.state = {}
+      this._children = []
+      this.listeners = {}
+      // this.observer()
+    }
+
+    // observer() {
+    //   var observer = new MutationObserver(function(mutations) {
+    //     mutations.forEach(function(mutation) {
+    //       console.log(mutation.type, mutation);
+    //       mutation.addedNodes.forEach(function (node) {
+
+    //       })
+    //     })
+    //   })
+
+    //   var config = {
+    //     attributes: true,
+    //     childList: true,
+    //     characterData: true,
+    //     subtree: true
+    //   }
+       
+    //   // pass in the target node, as well as the observer options
+    //   observer.observe(this.el, config);
+    // }
+
+    _render() {
+      var options = _.defaults(this.render(), this.props)
+      this.el = this.el || options.el || document.createElement(options.tag)
+
+      this.el.innerHTML = options.value || ""
+
+      if (options.styles) {
+        for (var k in options.styles) {
+          this.el.style[k] = options.styles[k]
+        }
+      }
+
+      // if (options.class) {
+      //   this.el.className = 
+      // }
+
+      ["id", "type", "for"].forEach((attribute)=> {
+        if (options[attribute]) {
+          this.el[attribute] = options[attribute]
+        }
+      })
+
+      if (options.onClick) {
+        // TODO: cache events so they can be removed? Or, just make sure not to add the event the second time
+        this.addEventListener("click", options.onClick)
+      } else if (this.previousProps && this.previousProps.onClick) {
+        this.removeEventListener("click", this.previousProps.onClick)
+      }
+
+      if (options.children) {
+        options.children.forEach(function (child, i) {
+          // TODO: determine if children have been removed and remove them...
+          // if (child._key) {
+          //   child.render()
+          // } else {
+          //   this.el.appendChild((create(_.extend(child, {_key: i}))).el)
+          // }
+          // this.el.appendChild((create(_.extend(child, {_key: i}))).el)
+          if (child) {
+            var _child = create(_.extend(child, {_key: i}))
+            _child._render()
+            this.el.appendChild(_child.el)
+            this._children.push(_child)
+          }
+        }.bind(this))
+      }
+      this.previousProps = options
+    }
+
+    render() {
+      return this.props
+    }
+
+    remove() {
+      if (props.onClick) {
+        this.el.removeEventListener("click", props.onClick)
+      }
+    }
+
+    setState(state) {
+      this.state = _.defaults(state, this.state)
+      this._render(this.render())
+    }
+
+    addEventListener(event, listener) {
+      var listener = listener.bind(this)
+      if (this.listeners[event]) {
+        var cached = this.listeners[event].filter(function (cachedEvent) {
+          return cachedEvent == listener
+        })
+        if (!cached) {
+          this.listeners[event].push(listener)
+          this.el.addEventListener(event, listener)
+        }
+      } else {
+        this.listeners[event] = [listener]
+        this.el.addEventListener(event, listener)
+      }
+    }
+
+    removeEventListener(event) {
+      this.listeners[event] && this.listeners[event].forEach((fn)=> {
+        this.el.removeEventListener(event, fn)
+      })
+    }
   }
 
   // Component.prototype._init = function () {
   //   this.init()
   // }
-
-  Component.prototype.init = function() {
-    this.state = {}
-  }
-
-  Component.prototype._render = function(options) {
-    if (!this.el) {
-      this.el = document.createElement(options.tag)
-    }
-    this.el.innerHTML = options.value || ""
-
-    if (options.styles) {
-      for (var k in options.styles) {
-        this.el.style[k] = options.styles[k]
-      }
-    }
-
-    if (options.onClick) {
-      // TODO: cache events so they can be removed? Or, just make sure not to add the event the second time
-      addEventListener(this.el, "click", options.onClick.bind(this))
-    }
-
-    if (options.children) {
-      options.children.forEach(function (child, i) {
-        // TODO: determin if children have been removed and remove them...
-        // if (child._key) {
-        //   child.render()
-        // } else {
-        //   this.el.appendChild((create(_.extend(child, {_key: i}))).el)
-        // }
-        this.el.appendChild((create(_.extend(child, {_key: i}))).el)
-      }.bind(this))
-    }
-  }
-
-  Component.prototype.render = function () {
-    return this.props
-  }
-
-  Component.prototype.remove = function() {
-    if (props.onClick) {
-      this.el.removeEventListener("click", props.onClick)
-    }
-  }
-
-  Component.prototype.setState = function (state) {
-    this.state = _.defaults(state, this.state)
-    this._render(this.render())
-  }
-
-  function addEventListener(el, event, listener) {
-    el.addEventListener(event, listener)
-  }
 
   function create(props) {
     return props.component ? new props.component(props) : new Component(props)

@@ -38,15 +38,18 @@ function table(props) {
               })
               return {
                 tag: "td",
-                children: items && items.items.map(function (item) {
+                children: [{
+                  component: DebitForm,
+                  handleClick: function (e) {
+                      console.log("CLICKED!!", e)
+                    }
+                }].concat(items && items.items.map(function (item) {
                   return {
                     component: Debit,
                     item: item,
-                    handleClick: function (e) {
-                      console.log("CLICKED!!", e)
-                    }
+                    // category:
                   }
-                })
+                }))
               }
             })
           )
